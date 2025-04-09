@@ -1,11 +1,11 @@
 # Schema creator [generated with picture of ER diagram, through loveable.dev]
 
-# Following ER diagram was used, to generate project through loveable.dev
+## Following ER diagram was used, to generate project through loveable.dev
 
 ![image](https://github.com/user-attachments/assets/cbfc34f4-783a-4838-b5e3-636efa03bd7e)
 
 
-# Pictures
+## Pictures
 
 ![image](https://github.com/user-attachments/assets/bf193cdb-302b-47db-82dd-4f8ac318ab65)
 
