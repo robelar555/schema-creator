@@ -26,12 +26,17 @@ export interface SchemaElement {
     bottom?: string;
     left?: string;
   };
+  label?: string;
+  labelColor?: string;
 }
 
 export interface Schema {
   id: string;
   name: string;
   elements: SchemaElement[];
+  color?: string;
+  category?: string;
+  description?: string;
 }
 
 export interface SchemaResponse {

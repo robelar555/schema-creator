@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Schema } from '@/types/schema';
-import { Table, FileType, FileSignature, Eye } from 'lucide-react';
+import { Table, FileType, FileSignature, Eye, Tag } from 'lucide-react';
 import SchemaElementCard from './SchemaElementCard';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -40,13 +40,31 @@ const SchemaDetails = ({ schema }: SchemaDetailsProps) => {
       <div className="border-b border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="font-semibold text-xl flex items-center gap-2">
-              <FileType className="h-5 w-5 text-blue-600" />
-              Schema: {schema.name}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-semibold text-xl flex items-center gap-2">
+                <FileType className="h-5 w-5 text-blue-600" />
+                Schema: {schema.name}
+              </h2>
+              
+              {schema.category && (
+                <span 
+                  className="px-2 py-0.5 text-xs font-medium rounded-full" 
+                  style={{ 
+                    backgroundColor: schema.color || '#6366F1',
+                    color: 'white'
+                  }}
+                >
+                  {schema.category}
+                </span>
+              )}
+            </div>
+            
             <div className="text-gray-500 dark:text-gray-400 text-sm mt-1 flex items-center">
               <FileSignature className="h-4 w-4 mr-1" />
               ID: {schema.id} • {schema.elements.length} Elements
+              {schema.description && (
+                <span className="ml-2">• {schema.description}</span>
+              )}
             </div>
           </div>
           <Button 
@@ -68,6 +86,16 @@ const SchemaDetails = ({ schema }: SchemaDetailsProps) => {
             {schema.elements.map((element) => (
               <div key={element.id} className="relative">
                 <SchemaElementCard element={element} />
+                {element.label && (
+                  <div className="absolute -top-2 -right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium shadow-sm"
+                      style={{ 
+                        backgroundColor: element.labelColor || '#6366F1',
+                        color: 'white'
+                      }}>
+                    <Tag className="h-3 w-3" />
+                    {element.label}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Schema, SchemaElement } from '@/types/schema';
+import { Tag } from 'lucide-react';
 
 interface SchemaPreviewProps {
   schema: Schema;
@@ -104,14 +105,35 @@ const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
   return (
     <div className="bg-white border border-gray-200 rounded-md p-8 shadow-inner">
       <div className="mb-6 border-b border-gray-200 pb-4">
-        <h2 className="text-xl font-bold text-gray-800">Preview: {schema.name}</h2>
-        <p className="text-sm text-gray-500">This is how your schema would look when implemented</p>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-800">Preview: {schema.name}</h2>
+          {schema.category && (
+            <span 
+              className="px-2 py-0.5 text-xs font-medium rounded-full text-white" 
+              style={{ backgroundColor: schema.color || '#6366F1' }}
+            >
+              {schema.category}
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-gray-500">
+          {schema.description || 'This is how your schema would look when implemented'}
+        </p>
       </div>
       
       <div className="space-y-4">
         {schema.elements.map((element) => (
-          <div key={element.id} className="py-2">
+          <div key={element.id} className="py-2 relative">
             {renderElement(element)}
+            {element.label && (
+              <div 
+                className="absolute -top-3 -right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium shadow-sm"
+                style={{ backgroundColor: element.labelColor || '#6366F1', color: 'white' }}
+              >
+                <Tag className="h-3 w-3" />
+                {element.label}
+              </div>
+            )}
           </div>
         ))}
       </div>
