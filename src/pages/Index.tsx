@@ -40,14 +40,14 @@ const Index = () => {
                   Welcome to Schema Explorer! 👋
                 </h2>
                 <p className="text-blue-700 dark:text-blue-300">
-                  This tool helps you view and manage different schema designs. Here's what you can do:
+                  This tool helps you create and preview different schema designs. Here's what you can do:
                 </p>
                 <ul className="mt-2 space-y-1 list-disc list-inside text-blue-700 dark:text-blue-300">
                   <li>Browse through existing schemas</li>
                   <li>View details of each schema element</li>
                   <li>Create new schemas with the "Create New" button</li>
-                  <li>Review schemas to approve or reject elements</li>
-                  <li>View schema pictures by clicking "View Picture"</li>
+                  <li>Preview how schemas would look when implemented</li>
+                  <li>View schema diagrams by clicking "View Picture"</li>
                 </ul>
                 <p className="mt-3 text-blue-700 dark:text-blue-300">
                   Click on any schema in the list to get started!

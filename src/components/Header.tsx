@@ -42,12 +42,13 @@ const Header = ({ title, onNewSchema }: HeaderProps) => {
               </button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-xs">
-              <p>Welcome to Schema Explorer! This tool helps you view and manage schema designs.</p>
+              <p>Welcome to Schema Explorer! This tool helps you view, create, and preview schemas.</p>
               <ul className="mt-2 list-disc pl-4 text-xs">
                 <li>Click "Create New" to make a new schema</li>
                 <li>Select a schema from the list to view it</li>
+                <li>Click "Preview Schema" to see how it would look when implemented</li>
                 <li>Use the buttons below the list to manage schemas</li>
-                <li>Click "View Diagram" to see a visual representation</li>
+                <li>Click "View Picture" to see a visual representation</li>
               </ul>
             </TooltipContent>
           </Tooltip>

@@ -248,7 +248,7 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
               <Info className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Get started by selecting a schema from the list above or create a new one
+                  Select a schema to view elements or preview how it would look when implemented
                 </p>
               </div>
             </div>
