@@ -1,4 +1,15 @@
-# Welcome to your Lovable project
+# Generated with following picture [generated with loveable.dev]
+
+![image](https://github.com/user-attachments/assets/cbfc34f4-783a-4838-b5e3-636efa03bd7e)
+
+
+#Pictures
+
+![image](https://github.com/user-attachments/assets/bf193cdb-302b-47db-82dd-4f8ac318ab65)
+
+![image](https://github.com/user-attachments/assets/0358fe40-aa14-4a77-b4f8-ba446d52de4e)
+
+![image](https://github.com/user-attachments/assets/0410ade6-7091-465e-a900-74922f805a7c)
 
 ## Project info
 
