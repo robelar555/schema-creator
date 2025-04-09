@@ -1,12 +1,22 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import Header from '@/components/Header';
+import SchemaViewer from '@/components/SchemaViewer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
+      <Header title="Schema Explorer" />
+      
+      <main className="flex-1 container mx-auto px-4 py-6">
+        <SchemaViewer />
+      </main>
+      
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4">
+        <div className="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+          Schema Explorer &copy; {new Date().getFullYear()} • Powered by Lovable
+        </div>
+      </footer>
     </div>
   );
 };
