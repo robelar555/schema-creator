@@ -5,13 +5,85 @@ import { Tag } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { 
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ContextMenuSeparator
+} from "@/components/ui/context-menu";
+import { useToast } from "@/hooks/use-toast";
 
 interface SchemaPreviewProps {
   schema: Schema;
   isInteractive?: boolean;
+  onElementUpdate?: (elements: SchemaElement[]) => void;
+  onElementRemove?: (elementId: string) => void;
 }
 
-const SchemaPreview = ({ schema, isInteractive = false }: SchemaPreviewProps) => {
+const SchemaPreview = ({ 
+  schema, 
+  isInteractive = false, 
+  onElementUpdate,
+  onElementRemove
+}: SchemaPreviewProps) => {
+  const { toast } = useToast();
+  
+  const handleMoveElement = (elementId: string, direction: 'up' | 'down' | 'left' | 'right') => {
+    if (!onElementUpdate) return;
+    
+    const elementIndex = schema.elements.findIndex(e => e.id === elementId);
+    if (elementIndex === -1) return;
+    
+    const newElements = [...schema.elements];
+    
+    // Determine target index based on direction
+    let targetIndex: number;
+    switch(direction) {
+      case 'up':
+        targetIndex = elementIndex - 1;
+        if (targetIndex < 0) {
+          toast({ title: "Can't move up", description: "Element is already at the top" });
+          return;
+        }
+        break;
+      case 'down':
+        targetIndex = elementIndex + 1;
+        if (targetIndex >= newElements.length) {
+          toast({ title: "Can't move down", description: "Element is already at the bottom" });
+          return;
+        }
+        break;
+      case 'left':
+      case 'right':
+        // For simplicity, we're not implementing left/right movement yet
+        toast({ title: "Not implemented", description: `${direction} movement is not yet implemented` });
+        return;
+    }
+    
+    // Swap elements
+    const temp = newElements[elementIndex];
+    newElements[elementIndex] = newElements[targetIndex];
+    newElements[targetIndex] = temp;
+    
+    onElementUpdate(newElements);
+    
+    toast({
+      title: "Element moved",
+      description: `Element moved ${direction}`
+    });
+  };
+  
+  const handleRemoveElement = (elementId: string) => {
+    if (!onElementRemove) return;
+    onElementRemove(elementId);
+    
+    toast({
+      title: "Element removed",
+      description: "Element has been removed from the schema"
+    });
+  };
+
   const renderElement = (element: SchemaElement) => {
     const { html_tag, html_id, html_name, type, value, class: className } = element;
     
@@ -156,18 +228,53 @@ const SchemaPreview = ({ schema, isInteractive = false }: SchemaPreviewProps) =>
       
       <div className="space-y-4">
         {schema.elements.map((element) => (
-          <div key={element.id} className="py-2 relative">
-            {renderElement(element)}
-            {element.label && (
-              <div 
-                className="absolute -top-3 -right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium shadow-sm"
-                style={{ backgroundColor: element.labelColor || '#6366F1', color: 'white' }}
-              >
-                <Tag className="h-3 w-3" />
-                {element.label}
+          <ContextMenu key={element.id}>
+            <ContextMenuTrigger asChild>
+              <div className="py-2 relative hover:outline-dashed hover:outline-blue-400 hover:outline-1 rounded-sm">
+                {renderElement(element)}
+                {element.label && (
+                  <div 
+                    className="absolute -top-3 -right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium shadow-sm"
+                    style={{ backgroundColor: element.labelColor || '#6366F1', color: 'white' }}
+                  >
+                    <Tag className="h-3 w-3" />
+                    {element.label}
+                  </div>
+                )}
               </div>
+            </ContextMenuTrigger>
+            {isInteractive && (
+              <ContextMenuContent>
+                <ContextMenuItem
+                  onClick={() => handleMoveElement(element.id, 'up')}
+                >
+                  Move up
+                </ContextMenuItem>
+                <ContextMenuItem
+                  onClick={() => handleMoveElement(element.id, 'down')}
+                >
+                  Move down
+                </ContextMenuItem>
+                <ContextMenuItem
+                  onClick={() => handleMoveElement(element.id, 'left')}
+                >
+                  Move left
+                </ContextMenuItem>
+                <ContextMenuItem
+                  onClick={() => handleMoveElement(element.id, 'right')}
+                >
+                  Move right
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+                <ContextMenuItem
+                  onClick={() => handleRemoveElement(element.id)}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  Remove element
+                </ContextMenuItem>
+              </ContextMenuContent>
             )}
-          </div>
+          </ContextMenu>
         ))}
       </div>
     </div>

@@ -169,6 +169,31 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
     }
   };
 
+  const handleUpdateElements = (updatedElements: SchemaElement[]) => {
+    if (!activeSchema) return;
+    
+    const updatedSchema: Schema = {
+      ...activeSchema,
+      elements: updatedElements
+    };
+    
+    setSchemas(schemas.map(s => s.id === activeSchema.id ? updatedSchema : s));
+    setActiveSchema(updatedSchema);
+  };
+  
+  const handleRemoveElement = (elementId: string) => {
+    if (!activeSchema) return;
+    
+    const updatedElements = activeSchema.elements.filter(element => element.id !== elementId);
+    const updatedSchema: Schema = {
+      ...activeSchema,
+      elements: updatedElements
+    };
+    
+    setSchemas(schemas.map(s => s.id === activeSchema.id ? updatedSchema : s));
+    setActiveSchema(updatedSchema);
+  };
+
   return (
     <div className="h-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {/* Sidebar */}
@@ -356,7 +381,7 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
                 Interactive Preview
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Add elements to your schema using the toolbar and see changes instantly
+                Add elements to your schema using the toolbar and see changes instantly. Right-click elements to reposition or remove them.
               </p>
             </div>
             <div className="p-4">
@@ -364,7 +389,12 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
                 schema={activeSchema} 
                 onAddElement={handleAddElementFromToolbar} 
               />
-              <SchemaPreview schema={activeSchema} isInteractive={true} />
+              <SchemaPreview 
+                schema={activeSchema} 
+                isInteractive={true}
+                onElementUpdate={handleUpdateElements}
+                onElementRemove={handleRemoveElement}
+              />
             </div>
           </div>
         ) : (
