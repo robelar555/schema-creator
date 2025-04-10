@@ -4,8 +4,10 @@ import { schemaData } from '@/lib/schemaData';
 import SchemaList from './SchemaList';
 import SchemaDetails from './SchemaDetails';
 import SchemaForm from './SchemaForm';
-import { Schema } from '@/types/schema';
-import { Search, Database, ImageIcon, PlusCircle, Edit2, Trash, Info } from 'lucide-react';
+import SchemaPreview from './SchemaPreview';
+import ElementToolbar from './ElementToolbar';
+import { Schema, SchemaElement } from '@/types/schema';
+import { Search, Database, ImageIcon, PlusCircle, Edit2, Trash, Info, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
@@ -23,6 +25,7 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
   const [isShowingDiagram, setIsShowingDiagram] = useState<boolean>(false);
   const [isEditingSchema, setIsEditingSchema] = useState<boolean>(false);
   const [isCreatingSchema, setIsCreatingSchema] = useState<boolean>(false);
+  const [isInteractivePreview, setIsInteractivePreview] = useState<boolean>(false);
   const [showHelperText, setShowHelperText] = useState(true);
 
   useEffect(() => {
@@ -56,12 +59,21 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
     setIsShowingDiagram(!isShowingDiagram);
     setIsEditingSchema(false);
     setIsCreatingSchema(false);
+    setIsInteractivePreview(false);
+  };
+
+  const toggleInteractivePreview = () => {
+    setIsInteractivePreview(!isInteractivePreview);
+    setIsShowingDiagram(false);
+    setIsEditingSchema(false);
+    setIsCreatingSchema(false);
   };
 
   const handleCreateSchema = () => {
     setIsCreatingSchema(true);
     setIsEditingSchema(false);
     setIsShowingDiagram(false);
+    setIsInteractivePreview(false);
   };
 
   // Expose the createSchema function to the parent component
@@ -74,6 +86,7 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
       setIsEditingSchema(true);
       setIsShowingDiagram(false);
       setIsCreatingSchema(false);
+      setIsInteractivePreview(false);
     } else {
       toast({
         title: "No Schema Selected",
@@ -132,6 +145,28 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
   const handleCancelForm = () => {
     setIsCreatingSchema(false);
     setIsEditingSchema(false);
+  };
+
+  const handleAddElementFromToolbar = (element: Partial<SchemaElement>) => {
+    if (activeSchema) {
+      const newElement: SchemaElement = {
+        ...element as SchemaElement,
+        id: `elem${Date.now()}`
+      };
+      
+      const updatedSchema: Schema = {
+        ...activeSchema,
+        elements: [...activeSchema.elements, newElement]
+      };
+      
+      setSchemas(schemas.map(s => s.id === activeSchema.id ? updatedSchema : s));
+      setActiveSchema(updatedSchema);
+      
+      toast({
+        title: "Element Added",
+        description: `Added ${newElement.html_tag || 'element'} to schema`
+      });
+    }
   };
 
   return (
@@ -230,8 +265,42 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors"
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 text-white rounded-lg shadow transition-colors ${
+                    isInteractivePreview ? 'bg-purple-600 hover:bg-purple-700' : 'bg-indigo-600 hover:bg-indigo-700'
+                  }`}
+                  onClick={isShowingDiagram ? toggleDiagram : toggleInteractivePreview}
+                >
+                  {isShowingDiagram ? (
+                    <>
+                      <ImageIcon className="h-4 w-4" />
+                      Hide Picture
+                    </>
+                  ) : isInteractivePreview ? (
+                    <>
+                      <Eye className="h-4 w-4" />
+                      Hide Preview
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4" />
+                      Interactive Preview
+                    </>
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{isInteractivePreview ? "Hide the interactive preview" : "See and edit schema in interactive preview"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          
+          <div className="mt-2 grid grid-cols-1 gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors`}
                   onClick={toggleDiagram}
+                  disabled={isInteractivePreview}
                 >
                   <ImageIcon className="h-4 w-4" />
                   {isShowingDiagram ? 'Hide Picture' : 'View Picture'}
@@ -277,6 +346,25 @@ const SchemaViewer = forwardRef<SchemaViewerHandle, {}>(({}, ref) => {
                 alt="Schema Diagram" 
                 className="max-w-full h-auto mx-auto border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
               />
+            </div>
+          </div>
+        ) : isInteractivePreview && activeSchema ? (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden h-full">
+            <div className="border-b border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-900">
+              <h2 className="font-semibold text-xl flex items-center gap-2">
+                <Eye className="h-5 w-5 text-purple-600" />
+                Interactive Preview
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Add elements to your schema using the toolbar and see changes instantly
+              </p>
+            </div>
+            <div className="p-4">
+              <ElementToolbar 
+                schema={activeSchema} 
+                onAddElement={handleAddElementFromToolbar} 
+              />
+              <SchemaPreview schema={activeSchema} isInteractive={true} />
             </div>
           </div>
         ) : (

@@ -28,6 +28,7 @@ export interface SchemaElement {
   };
   label?: string;
   labelColor?: string;
+  options?: string[];
 }
 
 export interface Schema {

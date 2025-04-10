@@ -2,12 +2,16 @@
 import React from 'react';
 import { Schema, SchemaElement } from '@/types/schema';
 import { Tag } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface SchemaPreviewProps {
   schema: Schema;
+  isInteractive?: boolean;
 }
 
-const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
+const SchemaPreview = ({ schema, isInteractive = false }: SchemaPreviewProps) => {
   const renderElement = (element: SchemaElement) => {
     const { html_tag, html_id, html_name, type, value, class: className } = element;
     
@@ -23,13 +27,34 @@ const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
 
     // For input elements
     if (html_tag === 'input') {
+      // Special handling for checkbox and radio
+      if (type === 'checkbox') {
+        return (
+          <div className="flex items-center space-x-2">
+            <Checkbox id={html_id} disabled={!isInteractive} />
+            <Label htmlFor={html_id}>{value || 'Checkbox'}</Label>
+          </div>
+        );
+      }
+      
+      if (type === 'radio') {
+        return (
+          <RadioGroup disabled={!isInteractive} defaultValue={value}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value={value || 'option'} id={html_id} />
+              <Label htmlFor={html_id}>{value || 'Radio Option'}</Label>
+            </div>
+          </RadioGroup>
+        );
+      }
+      
       return (
         <input 
           {...commonProps}
           type={type || 'text'} 
           value={value || ''} 
           placeholder={value || ''} 
-          readOnly
+          readOnly={!isInteractive}
           maxLength={element.maxlength}
           size={element.size}
           pattern={element.pattern}
@@ -45,6 +70,7 @@ const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
           {...commonProps}
           type={type as 'button' | 'submit' | 'reset' || 'button'} 
           className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${className || ''}`}
+          disabled={!isInteractive}
         >
           {value || 'Button'}
         </button>
@@ -57,6 +83,7 @@ const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
         <select 
           {...commonProps}
           className={`border border-gray-300 rounded px-3 py-2 ${className || ''}`}
+          disabled={!isInteractive}
         >
           <option>{value || 'Select an option'}</option>
           <option>Option 1</option>
@@ -73,6 +100,7 @@ const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
           placeholder={value || ''} 
           className={`border border-gray-300 rounded px-3 py-2 ${className || ''}`}
           rows={5}
+          readOnly={!isInteractive}
         >
           {value || ''}
         </textarea>
@@ -92,6 +120,11 @@ const SchemaPreview = ({ schema }: SchemaPreviewProps) => {
     if (html_tag?.match(/^h[1-6]$/)) {
       const Tag = html_tag as keyof JSX.IntrinsicElements;
       return <Tag {...commonProps}>{value || 'Heading'}</Tag>;
+    }
+
+    // For paragraph elements
+    if (html_tag === 'p') {
+      return <p {...commonProps}>{value || 'Paragraph'}</p>;
     }
 
     // Default to div for any other elements

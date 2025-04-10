@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Database, LayoutTemplate, HelpCircle, Tag } from 'lucide-react';
+import { Database, LayoutTemplate, HelpCircle, Tag, Eye } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface HeaderProps {
@@ -16,7 +16,7 @@ const Header = ({ title, onNewSchema }: HeaderProps) => {
           <Database className="h-8 w-8" />
           <div>
             <h1 className="text-2xl font-bold">{title}</h1>
-            <p className="text-sm text-blue-100">Easy Schema Builder with Labels</p>
+            <p className="text-sm text-blue-100">Easy Schema Builder with Labels & Interactive Preview</p>
           </div>
         </div>
         <div className="flex items-center space-x-4">
@@ -47,7 +47,7 @@ const Header = ({ title, onNewSchema }: HeaderProps) => {
                 <li>Click "Create New" to make a new schema</li>
                 <li>Select a schema from the list to view it</li>
                 <li>Add color labels to elements for better organization</li>
-                <li>Click "Preview Schema" to see how it would look when implemented</li>
+                <li>Click "Interactive Preview" to add elements with a toolbar</li>
                 <li>Use the buttons below the list to manage schemas</li>
                 <li>Click "View Picture" to see a visual representation</li>
               </ul>
