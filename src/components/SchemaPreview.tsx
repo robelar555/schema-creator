@@ -1,17 +1,11 @@
 
 import React from 'react';
 import { Schema, SchemaElement } from '@/types/schema';
-import { Tag } from 'lucide-react';
+import { Tag, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Trash } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { 
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-  ContextMenuSeparator
-} from "@/components/ui/context-menu";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 interface SchemaPreviewProps {
@@ -228,53 +222,69 @@ const SchemaPreview = ({
       
       <div className="space-y-4">
         {schema.elements.map((element) => (
-          <ContextMenu key={element.id}>
-            <ContextMenuTrigger asChild>
-              <div className="py-2 relative hover:outline-dashed hover:outline-blue-400 hover:outline-1 rounded-sm">
-                {renderElement(element)}
-                {element.label && (
-                  <div 
-                    className="absolute -top-3 -right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium shadow-sm"
-                    style={{ backgroundColor: element.labelColor || '#6366F1', color: 'white' }}
-                  >
-                    <Tag className="h-3 w-3" />
-                    {element.label}
-                  </div>
-                )}
-              </div>
-            </ContextMenuTrigger>
+          <div key={element.id} className="py-2 relative hover:outline-dashed hover:outline-blue-400 hover:outline-1 rounded-sm group">
             {isInteractive && (
-              <ContextMenuContent>
-                <ContextMenuItem
+              <div className="absolute -top-3 -right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-md shadow-sm border border-gray-200 z-10">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7" 
                   onClick={() => handleMoveElement(element.id, 'up')}
+                  title="Move Up"
                 >
-                  Move up
-                </ContextMenuItem>
-                <ContextMenuItem
+                  <ArrowUp className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7" 
                   onClick={() => handleMoveElement(element.id, 'down')}
+                  title="Move Down"
                 >
-                  Move down
-                </ContextMenuItem>
-                <ContextMenuItem
+                  <ArrowDown className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7" 
                   onClick={() => handleMoveElement(element.id, 'left')}
+                  title="Move Left"
                 >
-                  Move left
-                </ContextMenuItem>
-                <ContextMenuItem
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7" 
                   onClick={() => handleMoveElement(element.id, 'right')}
+                  title="Move Right"
                 >
-                  Move right
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50" 
                   onClick={() => handleRemoveElement(element.id)}
-                  className="text-red-600 focus:text-red-600"
+                  title="Delete Element"
                 >
-                  Remove element
-                </ContextMenuItem>
-              </ContextMenuContent>
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </div>
             )}
-          </ContextMenu>
+            
+            {renderElement(element)}
+            
+            {element.label && (
+              <div 
+                className="absolute -top-3 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium shadow-sm"
+                style={{ backgroundColor: element.labelColor || '#6366F1', color: 'white' }}
+              >
+                <Tag className="h-3 w-3" />
+                {element.label}
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>
